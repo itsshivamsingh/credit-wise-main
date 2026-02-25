@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Loan - CreditWise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">💳 CreditWise</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="apply.html" class="active">Apply Loan</a></li>
+                <li><a href="#" onclick="checkStatus()">Check Status</a></li>
+                <li><a href="#" onclick="showAbout()">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Loan Application Form</h1>
+            <p class="form-subtitle">Fill out the form below to apply for a loan</p>
+
+            <form id="loanForm" onsubmit="submitForm(event)">
+                <!-- Personal Information -->
+                <fieldset>
+                    <legend>Personal Information</legend>
+                    
+                    <div class="form-group">
+                        <label for="applicantId">Applicant ID <span class="required">*</span></label>
+                        <input type="text" id="applicantId" name="applicantId" required placeholder="e.g., APP001">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Age <span class="required">*</span></label>
+                            <input type="number" id="age" name="age" required min="18" max="65" placeholder="25">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="9876543210">
+                        </div>
+                        <div class="form-group">
+                            <label for="maritalStatus">Marital Status <span class="required">*</span></label>
+                            <select id="maritalStatus" name="maritalStatus" required>
+                                <option value="">Select Status</option>
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Divorced">Divorced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dependents">Number of Dependents <span class="required">*</span></label>
+                        <input type="number" id="dependents" name="dependents" required min="0" max="10" value="0">
+                    </div>
+                </fieldset>
+
+                <!-- Employment Information -->
+                <fieldset>
+                    <legend>Employment Information</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employmentStatus">Employment Status <span class="required">*</span></label>
+                            <select id="employmentStatus" name="employmentStatus" required>
+                                <option value="">Select Status</option>
+                                <option value="Salaried">Salaried</option>
+                                <option value="Self-Employed">Self-Employed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="yearsEmployed">Years Employed <span class="required">*</span></label>
+                            <input type="number" id="yearsEmployed" name="yearsEmployed" required min="0" max="50" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="homeOwnership">Home Ownership <span class="required">*</span></label>
+                        <select id="homeOwnership" name="homeOwnership" required>
+                            <option value="">Select Option</option>
+                            <option value="Own">Own</option>
+                            <option value="Mortgage">Mortgage</option>
+                            <option value="Rent">Rent</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <!-- Financial Information -->
+                <fieldset>
+                    <legend>Financial Information</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="applicantIncome">Your Annual Income (₹) <span class="required">*</span></label>
+                            <input type="number" id="applicantIncome" name="applicantIncome" required min="0" placeholder="500000">
+                        </div>
+                        <div class="form-group">
+                            <label for="coapplicantIncome">Co-applicant Income (₹)</label>
+                            <input type="number" id="coapplicantIncome" name="coapplicantIncome" min="0" value="0" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="creditScore">Credit Score <span class="required">*</span></label>
+                            <input type="number" id="creditScore" name="creditScore" required min="300" max="900" placeholder="750">
+                        </div>
+                        <div class="form-group">
+                            <label for="existingLoans">Existing Loans <span class="required">*</span></label>
+                            <input type="number" id="existingLoans" name="existingLoans" required min="0" value="0">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Loan Information -->
+                <fieldset>
+                    <legend>Loan Information</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="loanAmount">Loan Amount (₹) <span class="required">*</span></label>
+                            <input type="number" id="loanAmount" name="loanAmount" required min="0" placeholder="500000">
+                        </div>
+                        <div class="form-group">
+                            <label for="loanTerm">Loan Term (Months) <span class="required">*</span></label>
+                            <input type="number" id="loanTerm" name="loanTerm" required min="1" max="360" placeholder="60">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                    <a href="index.html" class="btn btn-secondary">Cancel</a>
+                </div>
+
+                <div id="formMessage" class="message" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 CreditWise Loan System. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
