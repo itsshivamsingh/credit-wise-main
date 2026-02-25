@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreditWise - Loan Approval System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">CreditWise</div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="#" onclick="showAbout()">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Smart Loan Approval System</h1>
+                <p>Get your loan decision in seconds with AI-powered analysis</p>
+                <a href="login.html" class="btn btn-primary">Get Started</a>
+                <a href="register.html" class="btn btn-secondary">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <section class="features">
+        <div class="container">
+            <h2>Why Choose CreditWise?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast Processing</h3>
+                    <p>Get instant loan approval decisions powered by machine learning</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced algorithms analyze your profile for accurate decisions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>Fair & Unbiased</h3>
+                    <p>Consistent, data-driven decisions without human bias</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure</h3>
+                    <p>Your data is encrypted and protected with enterprise security</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Fill Application</h3>
+                    <p>Provide your personal and financial details</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our ML model analyzes your profile</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Result</h3>
+                    <p>Receive instant approval or rejection</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to apply?</h2>
+            <p>Join thousands of satisfied customers who got their loans approved</p>
+            <a href="register.html" class="btn btn-primary btn-lg">Start Your Application</a>
+        </div>
+    </section>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAboutModal()">&times;</span>
+            <h2>About CreditWise</h2>
+            <p>CreditWise is an intelligent loan approval system that uses machine learning to make fast, accurate, and unbiased loan decisions.</p>
+            <p><strong>Key Features:</strong></p>
+            <ul>
+                <li>AI-powered loan prediction</li>
+                <li>Instant decision making</li>
+                <li>Fair and transparent process</li>
+                <li>Secure data handling</li>
+            </ul>
+            <p><strong>Technology Stack:</strong> MERN (MongoDB, Express, Node.js) + Python ML</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 CreditWise Loan System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'block';
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('aboutModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Loan - CreditWise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">CreditWise</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="apply.html" class="active">Apply Loan</a></li>
+                <li><a href="history.html">Loan History</a></li>
+                <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Apply for Loan</h1>
+            <p class="form-subtitle">Complete the form to apply for a loan. Our AI will evaluate your application instantly.</p>
+
+            <form id="loanForm" onsubmit="submitLoanApplication(event)">
+                <!-- Financial Information -->
+                <fieldset>
+                    <legend>Financial Information</legend>
+                    
+                    <div class="form-group">
+                        <label for="monthlyIncome">Monthly Income (₹) <span class="required">*</span></label>
+                        <input type="number" id="monthlyIncome" name="monthlyIncome" required min="0" placeholder="50000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="creditScore">Credit Score <span class="required">*</span></label>
+                        <input type="number" id="creditScore" name="creditScore" required min="300" max="900" placeholder="750">
+                        <small>Credit score between 300-900</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="employmentType">Employment Type <span class="required">*</span></label>
+                        <select id="employmentType" name="employmentType" required>
+                            <option value="">Select Type</option>
+                            <option value="Employed">Employed</option>
+                            <option value="Self-Employed">Self-Employed</option>
+                            <option value="Unemployed">Unemployed</option>
+                            <option value="Student">Student</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <!-- Loan Information -->
+                <fieldset>
+                    <legend>Loan Details</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="loanAmount">Loan Amount (₹) <span class="required">*</span></label>
+                            <input type="number" id="loanAmount" name="loanAmount" required min="10000" placeholder="500000">
+                        </div>
+                        <div class="form-group">
+                            <label for="loanTerm">Loan Term (Months) <span class="required">*</span></label>
+                            <input type="number" id="loanTerm" name="loanTerm" required min="6" max="360" placeholder="60">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary btn-block">Apply Now</button>
+                </div>
+
+                <div id="formMessage" class="message" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 CreditWise Loan System. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+        });
+
+        async function submitLoanApplication(e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem('token');
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const loanTerm = parseInt(document.getElementById('loanTerm').value);
+            const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value);
+            const creditScore = parseInt(document.getElementById('creditScore').value);
+            const employmentType = document.getElementById('employmentType').value;
+
+            const messageDiv = document.getElementById('formMessage');
+
+            try {
+                const response = await fetch('http://localhost:5001/api/loans/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        loanAmount,
+                        loanTerm,
+                        monthlyIncome,
+                        creditScore,
+                        employmentType
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    messageDiv.className = 'message error-message-box';
+                    messageDiv.textContent = data.message || 'Application failed';
+                    messageDiv.style.display = 'block';
+                    return;
+                }
+
+                messageDiv.className = 'message success-message';
+                messageDiv.innerHTML = `
+                    <strong>Application Submitted!</strong><br>
+                    Status: ${data.prediction}<br>
+                    Confidence: ${(data.confidenceScore * 100).toFixed(1)}%
+                `;
+                messageDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = 'history.html';
+                }, 2000);
+            } catch (error) {
+                messageDiv.className = 'message error-message-box';
+                messageDiv.textContent = 'Connection error. Please try again.';
+                messageDiv.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
