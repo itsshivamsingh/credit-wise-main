@@ -1,92 +1,57 @@
 const mongoose = require('mongoose');
 
 const loanSchema = new mongoose.Schema({
-  applicant_id: {
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  loanAmount: {
+    type: Number,
+    required: [true, 'Please provide loan amount']
+  },
+  loanTerm: {
+    type: Number,
+    required: [true, 'Please provide loan term (in months)']
+  },
+  monthlyIncome: {
+    type: Number,
+    required: [true, 'Please provide monthly income']
+  },
+  creditScore: {
+    type: Number,
+    required: [true, 'Please provide credit score']
+  },
+  employmentType: {
     type: String,
-    required: true,
-    unique: true
-  },
-  applicant_income: {
-    type: Number,
-    required: true
-  },
-  coapplicant_income: {
-    type: Number,
-    default: 0
-  },
-  employment_status: {
-    type: String,
-    enum: ['Salaried', 'Self-Employed'],
-    required: true
-  },
-  age: {
-    type: Number,
-    required: true
-  },
-  marital_status: {
-    type: String,
-    enum: ['Single', 'Married', 'Divorced'],
-    required: true
-  },
-  dependents: {
-    type: Number,
-    default: 0
-  },
-  credit_score: {
-    type: Number,
-    required: true
-  },
-  existing_loans: {
-    type: Number,
-    default: 0
-  },
-  loan_amount: {
-    type: Number,
-    required: true
-  },
-  loan_term: {
-    type: Number,
-    required: true
-  },
-  home_ownership: {
-    type: String,
-    enum: ['Own', 'Mortgage', 'Rent'],
-    default: 'Rent'
-  },
-  years_employed: {
-    type: Number,
-    default: 0
-  },
-  prediction: {
-    type: String,
-    enum: ['Approved', 'Rejected'],
-    default: null
-  },
-  confidence_score: {
-    type: Number,
-    default: null
+    enum: ['Employed', 'Self-Employed', 'Unemployed'],
+    default: 'Employed'
   },
   status: {
     type: String,
-    enum: ['Pending', 'Processed', 'Approved', 'Rejected'],
+    enum: ['Approved', 'Rejected', 'Under Review', 'Pending'],
     default: 'Pending'
   },
-  email: {
-    type: String,
-    required: true
+  mlScore: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 1
   },
-  phone: {
-    type: String,
-    required: true
-  },
-  created_at: {
+  appliedAt: {
     type: Date,
     default: Date.now
   },
-  updated_at: {
+  updatedAt: {
     type: Date,
     default: Date.now
   }
+});
+
+// Update the updatedAt field before saving
+loanSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Loan', loanSchema);
