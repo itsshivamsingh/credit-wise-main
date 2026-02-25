@@ -9,11 +9,11 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <div class="logo">💳 CreditWise</div>
+            <div class="logo">CreditWise</div>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="apply.html">Apply Loan</a></li>
-                <li><a href="#" onclick="checkStatus()">Check Status</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
                 <li><a href="#" onclick="showAbout()">About</a></li>
             </ul>
         </div>
@@ -24,8 +24,8 @@
             <div class="hero-content">
                 <h1>Smart Loan Approval System</h1>
                 <p>Get your loan decision in seconds with AI-powered analysis</p>
-                <a href="apply.html" class="btn btn-primary">Apply Now</a>
-                <a href="#" onclick="checkStatus()" class="btn btn-secondary">Check Application</a>
+                <a href="login.html" class="btn btn-primary">Get Started</a>
+                <a href="register.html" class="btn btn-secondary">Create Account</a>
             </div>
         </div>
     </div>
@@ -87,20 +87,9 @@
         <div class="container">
             <h2>Ready to apply?</h2>
             <p>Join thousands of satisfied customers who got their loans approved</p>
-            <a href="apply.html" class="btn btn-primary btn-lg">Start Your Application</a>
+            <a href="register.html" class="btn btn-primary btn-lg">Start Your Application</a>
         </div>
     </section>
-
-    <!-- Status Modal -->
-    <div id="statusModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Check Application Status</h2>
-            <input type="text" id="applicantId" placeholder="Enter your Applicant ID" class="form-input">
-            <button onclick="fetchStatus()" class="btn btn-primary">Search</button>
-            <div id="statusResult"></div>
-        </div>
-    </div>
 
     <!-- About Modal -->
     <div id="aboutModal" class="modal" style="display: none;">
@@ -115,7 +104,7 @@
                 <li>Fair and transparent process</li>
                 <li>Secure data handling</li>
             </ul>
-            <p><strong>Technology Stack:</strong> MERN (MongoDB, Express, React/Node, Node.js) + Python ML</p>
+            <p><strong>Technology Stack:</strong> MERN (MongoDB, Express, Node.js) + Python ML</p>
         </div>
     </div>
 
@@ -123,6 +112,21 @@
         <p>&copy; 2024 CreditWise Loan System. All rights reserved.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'block';
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('aboutModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>

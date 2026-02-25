@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan History - CreditWise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">CreditWise</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="apply.html">Apply Loan</a></li>
+                <li><a href="history.html" class="active">Loan History</a></li>
+                <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="history-header">
+            <h1>Loan Application History</h1>
+            <p>View all your loan applications and their status</p>
+        </div>
+
+        <!-- Filter Options -->
+        <div class="filter-section">
+            <select id="statusFilter" onchange="filterLoans()">
+                <option value="">All Status</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Under Review">Under Review</option>
+            </select>
+        </div>
+
+        <!-- Loading and Error Messages -->
+        <div id="loadingMessage" class="loading-message" style="display: none;">Loading your loan history...</div>
+        <div id="errorMessage" class="error-message-box" style="display: none;"></div>
+        <div id="emptyMessage" class="empty-message" style="display: none;">
+            <p>No loan applications found.</p>
+            <a href="apply.html" class="btn-primary">Apply for a Loan</a>
+        </div>
+
+        <!-- Loans Table -->
+        <div class="table-responsive">
+            <table class="loans-table" id="loansTable">
+                <thead>
+                    <tr>
+                        <th>Application Date</th>
+                        <th>Loan Amount</th>
+                        <th>Term (Months)</th>
+                        <th>Credit Score</th>
+                        <th>Status</th>
+                        <th>ML Score</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="loansTableBody">
+                    <!-- Loans will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Loan Details Modal -->
+    <div id="loanDetailModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2>Loan Application Details</h2>
+            
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>Loan Amount</label>
+                    <p id="detailLoanAmount">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Loan Term</label>
+                    <p id="detailLoanTerm">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Monthly Income</label>
+                    <p id="detailMonthlyIncome">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Credit Score</label>
+                    <p id="detailCreditScore">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Employment Type</label>
+                    <p id="detailEmploymentType">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Status</label>
+                    <p id="detailStatus">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>ML Score</label>
+                    <p id="detailMLScore">-</p>
+                </div>
+                <div class="detail-item">
+                    <label>Applied Date</label>
+                    <p id="detailAppliedDate">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 CreditWise Loan System. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        let allLoans = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await loadLoanHistory(token);
+        });
+
+        async function loadLoanHistory(token) {
+            const loadingDiv = document.getElementById('loadingMessage');
+            const errorDiv = document.getElementById('errorMessage');
+            const emptyDiv = document.getElementById('emptyMessage');
+
+            loadingDiv.style.display = 'block';
+
+            try {
+                const response = await fetch('http://localhost:5001/api/loans/history', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch loan history');
+                }
+
+                const data = await response.json();
+                allLoans = data.loans;
+                loadingDiv.style.display = 'none';
+
+                if (allLoans.length === 0) {
+                    emptyDiv.style.display = 'block';
+                } else {
+                    emptyDiv.style.display = 'none';
+                    displayLoans(allLoans);
+                }
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                errorDiv.textContent = error.message || 'Failed to load loan history';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function displayLoans(loans) {
+            const tbody = document.getElementById('loansTableBody');
+            tbody.innerHTML = '';
+
+            loans.forEach(loan => {
+                const row = document.createElement('tr');
+                const appliedDate = new Date(loan.appliedAt).toLocaleDateString();
+                const statusClass = `status-${loan.status.toLowerCase().replace(' ', '-')}`;
+                
+                row.innerHTML = `
+                    <td>${appliedDate}</td>
+                    <td>₹ ${loan.loanAmount.toLocaleString('en-IN')}</td>
+                    <td>${loan.loanTerm}</td>
+                    <td>${loan.creditScore}</td>
+                    <td><span class="status-badge ${statusClass}">${loan.status}</span></td>
+                    <td>${(loan.mlScore * 100).toFixed(1)}%</td>
+                    <td>
+                        <button class="btn-small" onclick="viewDetails('${loan._id}')">View</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterLoans() {
+            const status = document.getElementById('statusFilter').value;
+            const filtered = status 
+                ? allLoans.filter(loan => loan.status === status)
+                : allLoans;
+            displayLoans(filtered);
+        }
+
+        function viewDetails(loanId) {
+            const loan = allLoans.find(l => l._id === loanId);
+            if (!loan) return;
+
+            document.getElementById('detailLoanAmount').textContent = `₹ ${loan.loanAmount.toLocaleString('en-IN')}`;
+            document.getElementById('detailLoanTerm').textContent = `${loan.loanTerm} months`;
+            document.getElementById('detailMonthlyIncome').textContent = `₹ ${loan.monthlyIncome.toLocaleString('en-IN')}`;
+            document.getElementById('detailCreditScore').textContent = loan.creditScore;
+            document.getElementById('detailEmploymentType').textContent = loan.employmentType;
+            document.getElementById('detailStatus').textContent = loan.status;
+            document.getElementById('detailMLScore').textContent = `${(loan.mlScore * 100).toFixed(1)}%`;
+            document.getElementById('detailAppliedDate').textContent = new Date(loan.appliedAt).toLocaleString();
+
+            document.getElementById('loanDetailModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('loanDetailModal').style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('loanDetailModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

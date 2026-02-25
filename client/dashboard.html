@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CreditWise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">CreditWise</div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="apply.html">Apply Loan</a></li>
+                <li><a href="history.html">Loan History</a></li>
+                <li><a href="#" onclick="logout()" class="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- User Profile Section -->
+        <div class="dashboard-header">
+            <div class="user-welcome">
+                <h1>Welcome, <span id="userName">User</span>!</h1>
+                <p>Manage your loans and track applications</p>
+            </div>
+            <button class="btn-primary" onclick="window.location.href='apply.html'">Apply New Loan</button>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Total Applications</h3>
+                </div>
+                <div class="stat-value" id="totalApps">0</div>
+                <p class="stat-label">Loan applications</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Approved</h3>
+                </div>
+                <div class="stat-value approved" id="approvedApps">0</div>
+                <p class="stat-label">Successful approvals</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Under Review</h3>
+                </div>
+                <div class="stat-value pending" id="reviewApps">0</div>
+                <p class="stat-label">Pending decisions</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Rejected</h3>
+                </div>
+                <div class="stat-value rejected" id="rejectedApps">0</div>
+                <p class="stat-label">Declined applications</p>
+            </div>
+        </div>
+
+        <!-- User Profile Details -->
+        <div class="profile-section">
+            <h2>Your Profile</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <label>Full Name</label>
+                    <p id="profileName">-</p>
+                </div>
+                <div class="profile-item">
+                    <label>Email</label>
+                    <p id="profileEmail">-</p>
+                </div>
+                <div class="profile-item">
+                    <label>Phone</label>
+                    <p id="profilePhone">-</p>
+                </div>
+                <div class="profile-item">
+                    <label>Employment</label>
+                    <p id="profileEmployment">-</p>
+                </div>
+                <div class="profile-item">
+                    <label>Member Since</label>
+                    <p id="profileJoinDate">-</p>
+                </div>
+                <div class="profile-item">
+                    <label>Total Approved Amount</label>
+                    <p id="profileApprovedAmount">₹ 0</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingMessage" class="loading-message" style="display: none;">Loading dashboard...</div>
+        <div id="errorMessage" class="error-message-box" style="display: none;"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 CreditWise Loan System. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Display user name
+            document.getElementById('userName').textContent = user.fullName || 'User';
+
+            // Fetch dashboard stats
+            const loadingDiv = document.getElementById('loadingMessage');
+            const errorDiv = document.getElementById('errorMessage');
+
+            loadingDiv.style.display = 'block';
+
+            try {
+                const response = await fetch('http://localhost:5001/api/stats/dashboard', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard stats');
+                }
+
+                const data = await response.json();
+                loadingDiv.style.display = 'none';
+
+                // Update stats
+                document.getElementById('totalApps').textContent = data.stats.totalApplications;
+                document.getElementById('approvedApps').textContent = data.stats.approved;
+                document.getElementById('reviewApps').textContent = data.stats.underReview;
+                document.getElementById('rejectedApps').textContent = data.stats.rejected;
+
+                // Update profile
+                document.getElementById('profileName').textContent = data.user.fullName;
+                document.getElementById('profileEmail').textContent = data.user.email;
+                document.getElementById('profilePhone').textContent = data.user.phone;
+                document.getElementById('profileEmployment').textContent = data.user.employment;
+                
+                const joinDate = new Date(data.user.memberSince).toLocaleDateString();
+                document.getElementById('profileJoinDate').textContent = joinDate;
+                
+                document.getElementById('profileApprovedAmount').textContent = 
+                    `₹ ${data.stats.totalApprovedAmount.toLocaleString('en-IN')}`;
+
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                errorDiv.textContent = error.message || 'Failed to load dashboard';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
